@@ -1,0 +1,28 @@
+image: Visual Studio 2017
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python36-x64"
+
+install:
+  - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
+  - "%PYTHON%\\python.exe -m pip install pyinstaller"
+
+version: '0.0.1+{build}'
+
+build_script:
+  - "%PYTHON%\\Scripts\\pyinstaller.exe app.py --name sc2autouploader --add-data LICENSE;."
+  - ps: Compress-Archive -Path dist\sc2autouploader -DestinationPath "sc2autouploader-${Env:APPVEYOR_BUILD_VERSION}.zip"
+
+artifacts:
+  - path: 'sc2autouploader-%APPVEYOR_BUILD_VERSION%.zip'
+
+deploy:
+  - provider: GitHub
+    artifact: 'sc2autouploader-%APPVEYOR_BUILD_VERSION%.zip'
+    auth_token:
+      secure: zlT9Lhys07Vl1jwbCrvHJdCkcmPZIUcAA750FhzJNt9qbuGldDzn4svOEH20GPnZ
+    draft: false
+    prerelease: false
+    on:
+      appveyor_repo_tag: true

@@ -16,9 +16,7 @@ class ReplayUploader(sc2replaynotifier.ReplayHandler):
         async with aiohttp.ClientSession() as session:
             async with session.post(
                     self._upload_target, data=replay_file) as resp:
-                if str(resp.status).startswith("3") and "Location" in resp.headers:
-                    redirect = resp.headers["Location"]
-                    webbrowser.open_new_tab(urllib.parse.urljoin(self._upload_target, redirect))
+                webbrowser.open_new_tab(str(resp.url))
 
 
 def main():
@@ -27,12 +25,12 @@ def main():
         description=
         "Automatically upload StarCraft II replays to a target destination.")
     parser.add_argument(
-        "TARGET_URL", type=str, nargs=1, help="URL of replay upload target.")
+        "target_url", metavar="TARGET_URL", type=str, help="URL of replay upload target.")
 
     args = parser.parse_args()
 
     print("Waiting for replays...")
-    sc2replaynotifier.create_replay_notifier(ReplayUploader(args.TARGET_URL)).handle_replays()
+    sc2replaynotifier.create_replay_notifier(ReplayUploader(args.target_url)).handle_replays()
 
 
 if __name__ == "__main__":
