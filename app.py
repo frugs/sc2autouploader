@@ -11,12 +11,12 @@ class ReplayUploader(sc2replaynotifier.ReplayHandler):
 
     async def handle_replay(self, replay_path: str):
         print("Uploading replay: " + replay_path)
-        replay_file = open(replay_path, "rb")
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                    self._upload_target, data=replay_file) as resp:
-                webbrowser.open_new_tab(str(resp.url))
+        
+        with open(replay_path, "rb") as replay_file:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                        self._upload_target, data=replay_file) as resp:
+                    webbrowser.open_new_tab(str(resp.url))
 
 
 def main():
